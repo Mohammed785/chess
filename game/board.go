@@ -90,7 +90,7 @@ func (b *Board) DrawPieces(screen *ebiten.Image) {
 func (b *Board) GetPiece(pos [2]int) *Piece {
 	for c := range b.pieces {
 		for _, piece := range b.pieces[c] {
-			if piece.pos == pos {
+			if piece.pos == pos&&!piece.captured {
 				return piece
 			}
 		}
@@ -119,7 +119,7 @@ func (b *Board) IsCheckmated(player string) bool {
 		idx = 0
 	}
 	for _, piece := range b.pieces[idx] {
-		if len(b.ValidateMoves(player, piece, piece.GetAllMoves(b))) > 0 {
+		if !piece.captured&& len(b.ValidateMoves(player, piece, piece.GetAllMoves(b))) > 0 {
 			return false
 		}
 	}

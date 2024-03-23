@@ -87,13 +87,18 @@ func (g *Game) Update() error {
 					g.board.PawnDoubleMove.Player=""
 
 				}
-				if g.board.IsCheckmated(g.currentPlayer) {
-					g.winner = tempPlayer
-					g.gameMode = modeGameOver
-				}
+				cantMove:=g.board.IsCheckmated(g.currentPlayer)
 				if g.board.IsChecked(g.currentPlayer) {
 					g.playSound("check")
+					if cantMove{
+						g.winner = tempPlayer
+						g.gameMode = modeGameOver
+					}
 				} else {
+					if cantMove{
+						g.winner = "draw"
+						g.gameMode = modeGameOver
+					}
 					g.playSound(moveType)
 				}
 			} else if piece != nil && piece.Color == g.currentPlayer {
@@ -112,7 +117,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.board.HighlightSquares(screen, g.validMoves)
 
 	if g.gameMode == modeGameOver {
-		text.Draw(screen, fmt.Sprintf("%s Won!!", g.winner), game.FiraBig, 280, 300, color.Black)
+		if g.winner=="draw"{
+			text.Draw(screen, "Game ended in a Draw", game.FiraBig, 150, 300, color.Black)
+		}else{
+			text.Draw(screen, fmt.Sprintf("%s Won!!", g.winner), game.FiraBig, 280, 300, color.Black)
+		}
 		text.Draw(screen, "Press 'Enter' to start a new game", game.FiraNormal, 150, 400, color.Black)
 	}
 }
